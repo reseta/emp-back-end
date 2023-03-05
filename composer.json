@@ -8,7 +8,9 @@
         "vlucas/phpdotenv": "^5.5",
         "illuminate/database": "^5.5",
         "robmorgan/phinx": "^0.13.4",
-        "vlucas/valitron": "^1.4"
+        "vlucas/valitron": "^1.4",
+        "tuupola/slim-jwt-auth": "^3.7",
+        "firebase/php-jwt": "^5.5"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.0"

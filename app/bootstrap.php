@@ -15,8 +15,25 @@ $settings = require '../config/app.php';
 
 $app = new App($settings);
 
+// Add JWT auth
+$app->add(new Tuupola\Middleware\JwtAuthentication([
+    'path' => ['/api'],
+    'ignore' => ['/api/signup', '/api/signin'],
+    'secret' => $_ENV['APP_SECRET'],
+    'error' => function ($response, $arguments) {
+        $data['status'] = 'error';
+        $data['message'] = $arguments['message'];
+
+        $response->getBody()->write(
+            json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)
+        );
+
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+]));
+
 // Register Eloquent
-$capsule = new Capsule;
+$capsule = new Capsule();
 $capsule->addConnection($settings['settings']['db']);
 $capsule->setAsGlobal();
 $capsule->bootEloquent();

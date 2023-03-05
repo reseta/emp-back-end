@@ -14,7 +14,7 @@ class User extends AbstractSeed
                 'name' => 'John Doe',
                 'email' => 'john@domain.com',
                 'password' => '$2y$10$BlsdOkb7yWKdtq4pUhMcsud20yBmdz3Q.xhCNds0132GQKO1pdreO',
-                'role' => 1,
+                'role' => 'admin',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],

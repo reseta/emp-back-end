@@ -1,6 +1,6 @@
 <?php
 
-use \App\Migration\Migration;
+use App\Migration\Migration;
 
 final class Users extends Migration
 {
@@ -14,7 +14,7 @@ final class Users extends Migration
             ->addColumn('name', 'string')
             ->addColumn('email', 'string')
             ->addColumn('password', 'string')
-            ->addColumn('role', 'smallinteger', ['default' => 2])
+            ->addColumn('role', 'enum', ['values' => 'admin, user', 'default' => 'user'])
             ->addColumn('created_at', 'datetime')
             ->addColumn('updated_at', 'datetime')
             ->addColumn('deleted_at', 'datetime')

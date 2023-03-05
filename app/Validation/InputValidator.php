@@ -29,7 +29,11 @@ class InputValidator
 
         // add rules to validator
         foreach ($rules as $key => $value) {
-            $validator->rule($key, $value);
+            if (is_array($value)) {
+                $validator->rules([$key => $value]);
+            } else {
+                $validator->rule($key, $value);
+            }
         }
 
         if($validator->validate()) {

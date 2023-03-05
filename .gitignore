@@ -1,5 +1,6 @@
 # Project ignored
 /vendor
+.env
 
 # IDEs and editors
 .idea/

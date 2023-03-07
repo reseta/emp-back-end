@@ -92,11 +92,12 @@ class UserController extends BaseController
     {
         $inputData = $request->getParsedBody();
 
-        // Load user & check user exist
-        $attr = $request->getAttribute('token');
-        $user = User::getUserByEmail($attr['user']->email);
-        if (!$user) {
-            return $response->withStatus(404)->withJson(['error' => 'No such user']);
+        $token = $request->getAttribute('token');
+        $user = User::query()->find($token['user']->id);
+
+        // Check if user can edit
+        if (!$user || !$this->checkEditPermissions($token, $user->id)) {
+            return $response->withStatus(403)->withJson(['error' => 'Forbidden']);
         }
 
         // Validate input
@@ -126,20 +127,37 @@ class UserController extends BaseController
     public function delete(Request $request, Response $response, array $args): Response
     {
         // Check if is admin
-        $attr = $request->getAttribute('token');
-        if ($attr['user']->role !== RolesEnum::ADMIN->value) {
+        $token = $request->getAttribute('token');
+        if ($token['user']->role !== RolesEnum::ADMIN->value) {
             return $response->withStatus(403)->withJson(['error' => 'Forbidden']);
         }
 
-        $user = User::getUserById($args['userId']);
+        $user = User::query()->find($args['userId']);
         if (!$user) {
-            return $response->withStatus(404)->withJson(['error' => 'No such user']);
+            return $response->withStatus(404)->withJson(['error' => 'No found']);
         }
 
         try {
             $user->delete();
         } catch (Exception $e) {
             return $response->withStatus(500)->withJson(['error' => $e->getMessage()]);
+        }
+
+        return $response->withJson($user);
+    }
+
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @return Response
+     */
+    public function info(Request $request, Response $response): Response
+    {
+        $token = $request->getAttribute('token');
+
+        $user = User::query()->find($token['user']->id);
+        if (!$user) {
+            return $response->withStatus(404)->withJson(['error' => 'No found']);
         }
 
         return $response->withJson($user);

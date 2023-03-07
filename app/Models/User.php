@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Model
 {
@@ -33,11 +34,12 @@ class User extends Model
     ];
 
     /**
-     * List of validation rules
-     *
-     * @var array
+     * Get the blog post.
      */
-    protected array $rules = [];
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
 
     /**
      * @param string $value
@@ -64,6 +66,9 @@ class User extends Model
 
             'update' => $rules = [
                 'email' => 'email',
+                'equals' => [
+                    ['password', 'confirmPassword']
+                ],
                 'lengthBetween' => [
                     ['name', 3, 255],
                     ['email', 5, 255],
@@ -71,7 +76,10 @@ class User extends Model
             ],
 
             default => $rules = [
-                'required' => ['name', 'email'],
+                'required' => ['name', 'email', 'name'],
+                'equals' => [
+                    ['password', 'confirmPassword']
+                ],
                 'email' => 'email',
             ],
         };
@@ -88,16 +96,5 @@ class User extends Model
     public static function getUserByEmail(string $email): Model|null
     {
         return self::query()->where('email', $email)->first();
-    }
-
-    /**
-     * Find user by id
-     *
-     * @param int $id
-     * @return Model|null
-     */
-    public static function getUserById(int $id): Model|null
-    {
-        return self::query()->find($id);
     }
 }

@@ -18,7 +18,7 @@ $app = new App($settings);
 // Add JWT auth
 $app->add(new Tuupola\Middleware\JwtAuthentication([
     'path' => ['/api'],
-    'ignore' => ['/api/signup', '/api/signin'],
+    'ignore' => ['/api/signup', '/api/signin', '/api/posts/all'],
     'secret' => $_ENV['APP_SECRET'],
     'error' => function ($response, $arguments) {
         $data['status'] = 'error';

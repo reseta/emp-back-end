@@ -22,7 +22,7 @@ $app->group('/api', function () {
     // User routes
     $this->post('/signup', UserController::class . ':signUp');
     $this->post('/signin', UserController::class . ':signIn');
-    $this->patch('/user', UserController::class . ':update');
+    $this->put('/user', UserController::class . ':update');
     $this->delete('/user/{userId:[0-9]+}', UserController::class . ':delete');
     $this->get('/user', UserController::class . ':info');
 

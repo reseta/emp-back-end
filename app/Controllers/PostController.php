@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Enums\RolesEnum;
 use App\Models\Post;
+use App\Services\Image;
 use App\Validation\InputValidator;
 use Exception;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -66,12 +67,30 @@ class PostController extends BaseController
     {
         $inputData = $request->getParsedBody();
 
+        // upload image
+        if (isset($_FILES['image'])) {
+            $image = new Image($_FILES['image']);
+
+            if ($image->validate()) {
+                return $response->withStatus(409)->withJson($image->getErrors());
+            }
+
+            try {
+                $image->save();
+            } catch (Exception $e) {
+                return $response->withStatus(500)->withJson(['error' => $e->getMessage()]);
+            }
+        } else {
+            return $response->withStatus(409)->withJson(['image' => 'File not uploaded']);
+        }
+
         // Validate input
         if (!InputValidator::validate(Post::class, Post::getRules(), $inputData)) {
             return $response->withStatus(409)->withJson(InputValidator::$errors);
         }
 
         try {
+            $inputData['image'] = $image->getImageRelativePath() . '/' . $image->getFileName();
             $blogPost = new Post($inputData);
             $blogPost->user_id = $request->getAttribute('token')['user']->id;
             $blogPost->save();
